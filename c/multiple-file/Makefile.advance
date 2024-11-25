@@ -1,0 +1,20 @@
+OUTDIR = build
+SRCS = add.c main.c
+OBJS = $(SRCS:%.c=$(OUTDIR)/%.o)
+TARGET = $(OUTDIR)/main
+
+$(shell mkdir -p $(OUTDIR))
+
+$(OUTDIR)/%.o: %.c
+	$(CC) -c $< -o $@
+
+$(TARGET): $(OBJS)
+	$(CC) $^ -o $@
+	rm -rf *.o
+
+.PHONY: all
+all: $(TARGET)
+
+.PHONY: clean
+clean:
+	rm -rf $(OUTDIR)

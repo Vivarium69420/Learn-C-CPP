@@ -1,0 +1,17 @@
+CC = gcc
+OBJS = add.o main.o
+PROG = main
+
+$(PROG): $(OBJS)
+	$(CC) -o $@ $^
+
+add.o: add.c
+	$(CC) -c add.c
+
+main.o: main.c
+	$(CC) -c main.c
+
+clean:
+	rm -rf *.o main
+
+all: $(PROG)
