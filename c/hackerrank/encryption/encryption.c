@@ -4,7 +4,7 @@
  * # Intuition
  * - Remove spaces from the string
  * - Find the number of rows and columns. Special case where the number of
- *   rows * columns < strlen(s) then rows++ (requirement)
+ *   rows * columns < len then rows++ (requirement)
  * - Create a 2D array and copy the substrings into the array
  * - Iterate through the rows and columns to create the encrypted string. Avoids
  *   invalid index by checking the length of the string.
@@ -28,18 +28,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+void printMallocError() { printf("Memory allocation failed!\n"); }
+
 char *removeSpaces(char *s) {
-  char *ret_val = (char *)malloc(
-      strlen(s) + 1);  // Allocate memory with extra byte for null terminator
+  size_t len = strlen(s);
+  char *retVal = (char *)malloc(
+      len + 1);  // Allocate memory with extra byte for null terminator
   size_t index = 0;
-  for (int i = 0; i < strlen(s); i++) {
+  for (int i = 0; i < len; i++) {
     if (*(s + i) != ' ') {
-      ret_val[index] = s[i];
+      retVal[index] = s[i];
       index++;
     }
   }
-  ret_val[index] = '\0';  // Null-terminate the string
-  return ret_val;
+  retVal[index] = '\0';  // Null-terminate the string
+  return retVal;
 }
 
 void concatenate(char *str, char *str_cat) {
@@ -53,18 +56,56 @@ void concatenate(char *str, char *str_cat) {
 }
 
 char *encryption(char *s) {
-  s = removeSpaces(s);
-  int rows = floor(sqrt(strlen(s)));
-  int columns = ceil(sqrt(strlen(s)));
+  char *noSpaces = removeSpaces(s);
 
-  if (rows * columns < strlen(s)) {
+  if (!noSpaces) {
+    free(noSpaces);
+    printMallocError();
+    return NULL;
+  }
+  size_t len = strlen(noSpaces);
+  int rows = floor(sqrt(len));
+  int columns = ceil(sqrt(len));
+
+  if (rows * columns < len) {
     rows++;
+  }
+
+  char *retVal = (char *)malloc((columns * rows + rows) * sizeof(char));
+  if (!retVal) {
+    free(retVal);
+    printMallocError();
+    return NULL;
+  }
+
+  retVal[0] = '\0';
+
+  char *temp = (char *)malloc((columns * sizeof(char)) + 1);
+  if (!temp) {
+    free(temp);
+    printMallocError();
+    return NULL;
   }
 
   // Create an empty 2D array
   char **arr = (char **)malloc(rows * sizeof(char *));
+  if (!arr) {
+    free(noSpaces);
+    printMallocError();
+    return NULL;
+  }
+
   for (int i = 0; i < rows; i++) {
-    arr[i] = (char *)malloc(columns * sizeof(char));
+    arr[i] = (char *)malloc((columns * sizeof(char)) + 1);
+    if (!arr[i]) {
+      for (int j = 0; j < i; i++) {
+        free(arr[j]);  // if at any index failed, free them
+      }
+      free(arr);
+      free(noSpaces);
+      printMallocError();
+      return NULL;
+    }
   }
 
   // Copy substrings into the array
@@ -72,28 +113,24 @@ char *encryption(char *s) {
     strncpy(*(arr + i), s + i * columns, columns);
   }
 
-  char *ret_val = (char *)malloc((rows * columns));
-  if (ret_val == NULL) {
-    return NULL;
-  }
-  ret_val[0] = '\0';
-
-  char *temp = (char *)malloc(columns + 1);
-  if (temp == NULL) {
-    return NULL;
-  }
+  int pos = 0;
   for (int col = 0; col < columns; col++) {
-    memset(temp, 0, rows + 1);  // Clear the temp string
     for (int row = 0; row < rows; row++) {
-      // Ensure the index is within bounds
-      // row * columns = starting index of the current row in the original
-      // string, then add col to get the exact index based on the current row
-      if (row * columns + col < strlen(s)) {
-        strncpy(temp + row, &arr[row][col], 1);
+      if (arr[row][col] != '\0') {
+        retVal[pos++] = arr[row][col];
       }
     }
-    concatenate(ret_val, temp);
+    retVal[pos++] = ' ';
   }
+  retVal[pos - 1] = '\0';  // Replace the last space with null-terminator
 
-  return ret_val;
+  // Free all dynamically allocated memory
+  free(temp);
+  for (int i = 0; i < rows; i++) {
+    free(arr[i]);
+  }
+  free(arr);
+  free(noSpaces);
+
+  return retVal;
 };
