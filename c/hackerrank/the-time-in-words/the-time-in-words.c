@@ -64,7 +64,7 @@ char *getTimeInWord(int time) {
 void concatenate(char *str, char *str_cat) {
   char *space = " ";
   if (strlen(str_cat) > 0) {
-    if (strlen(str) > 0) {  // avoid creating empty at the beginning
+    if (strlen(str) > 0) { // avoid creating empty at the beginning
       strncat(str, space, 1);
     }
     strncat(str, str_cat, strlen(str_cat));
@@ -73,6 +73,10 @@ void concatenate(char *str, char *str_cat) {
 
 char *getMinutes(int minutes) {
   char *ret_val = (char *)malloc(BYTES_ALLOCATION);
+  if (!ret_val) {
+    printf("Memory allocation failed\n");
+    return NULL;
+  }
   char *tens = getTimeInWord((minutes / 10) * 10);
   concatenate(ret_val, tens);
   char *ones = getTimeInWord(minutes % 10);
@@ -82,6 +86,13 @@ char *getMinutes(int minutes) {
 
 char *getMinutesWithCheck(int minutes) {
   char *ret_val = (char *)malloc(BYTES_ALLOCATION);
+  if (!ret_val) {
+    printf("Memory allocation failed\n");
+    return NULL;
+  }
+
+  ret_val[0] = '\0'; // Initialize as empty string
+  //
   char *ret_minutes;
   if (minutes < 20 || minutes == 30) {
     ret_minutes = getTimeInWord(minutes);
@@ -101,9 +112,9 @@ char *getMinutesWithCheck(int minutes) {
 
 char *timeInWords(int h, int m) {
   char *ret_val;
-  char *o_clock = "o' clock";  // minutes = 0
-  char *past = "past";         // 1 <= minutes <= 30
-  char *to = "to";             // minutes > 30
+  char *o_clock = "o' clock"; // minutes = 0
+  char *past = "past";        // 1 <= minutes <= 30
+  char *to = "to";            // minutes > 30
   char *hour;
   char *minutes;
   int remaining_time;
@@ -114,7 +125,7 @@ char *timeInWords(int h, int m) {
     printf("Memory allocation failed\n");
     return NULL;
   }
-  ret_val[0] = '\0';  // Ensure the memory is an empty string
+  ret_val[0] = '\0'; // Ensure the memory is an empty string
 
   if (m == 0) {
     hour = getTimeInWord(h);
