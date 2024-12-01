@@ -1,5 +1,6 @@
 /* ========= The Time in Words =========
  * Link: https://www.hackerrank.com/challenges/the-time-in-words/problem
+ * Difficulty: Medium
  *
  * # Intuition
  * - Create a dictionary to match the time to a word (I hate doing this

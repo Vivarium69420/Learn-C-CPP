@@ -1,5 +1,6 @@
 /* ========= Encryption =========
  * Link: https://www.hackerrank.com/challenges/encryption/problem
+ * Difficulty: Medium
  *
  * # Intuition
  * - Remove spaces from the string
@@ -33,7 +34,7 @@ void printMallocError() { printf("Memory allocation failed!\n"); }
 char *removeSpaces(char *s) {
   size_t len = strlen(s);
   char *retVal = (char *)malloc(
-      len + 1);  // Allocate memory with extra byte for null terminator
+      len + 1); // Allocate memory with extra byte for null terminator
   size_t index = 0;
   for (int i = 0; i < len; i++) {
     if (*(s + i) != ' ') {
@@ -41,14 +42,14 @@ char *removeSpaces(char *s) {
       index++;
     }
   }
-  retVal[index] = '\0';  // Null-terminate the string
+  retVal[index] = '\0'; // Null-terminate the string
   return retVal;
 }
 
 void concatenate(char *str, char *str_cat) {
   char *space = " ";
   if (strlen(str_cat) > 0) {
-    if (strlen(str) > 0) {  // avoid creating empty at the beginning
+    if (strlen(str) > 0) { // avoid creating empty at the beginning
       strncat(str, space, 1);
     }
     strncat(str, str_cat, strlen(str_cat));
@@ -99,7 +100,7 @@ char *encryption(char *s) {
     arr[i] = (char *)malloc((columns * sizeof(char)) + 1);
     if (!arr[i]) {
       for (int j = 0; j < i; i++) {
-        free(arr[j]);  // if at any index failed, free them
+        free(arr[j]); // if at any index failed, free them
       }
       free(arr);
       free(noSpaces);
@@ -122,7 +123,7 @@ char *encryption(char *s) {
     }
     retVal[pos++] = ' ';
   }
-  retVal[pos - 1] = '\0';  // Replace the last space with null-terminator
+  retVal[pos - 1] = '\0'; // Replace the last space with null-terminator
 
   // Free all dynamically allocated memory
   free(temp);
